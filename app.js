@@ -1,4 +1,4 @@
-const parser = require('./pkg/x509_parser');
+const { parseCertificate, parseDer } = require('./pkg/x509_parser');
 
 const pem = `
 -----BEGIN CERTIFICATE-----
@@ -34,13 +34,7 @@ Fcix40FKEeiE093Aj3cweMYxNLPgwgQP8Xu3kA5QEw==
 -----END CERTIFICATE-----
 `;
 
-const pem2 = `
------BEGIN CERTIFICATE-----
-MIIBhjCCAS6gAwIBAgIBBjAPBg0rBgEEAZZkAwaDfQVuMBYxFDASBgNVBAMMC0JhY2tlbmRDQUcyMB4XDTIzMDMwOTEyMTAyOFoXDTI1MDQwOTEyMTAyOFowFDESMBAGA1UEAwwJTXlTdWJqZWN0MDQwDwYNKwYBBAGWZAMGg30FbgMhAOwXK5OtXlY79JMscOEkUDTDVGfvLv1NZOv4GWg0Z+K/o4GOMIGLMBcGDSsGAQQBlmQDBoN9BWUBAf8EAwQBAzAXBg0rBgEEAZZkAwaDfQVrAQH/BAMEAQAwHQYDVR0OBBYEFCZMpX+JbWSB0YfpiUcpWv7jbYJEMB8GA1UdIwQYMBaAFIQXaKUAVEN9W3Z/MoUHC0c1flyZMBcGDSsGAQQBlmQDBoN9BWYBAf8EAwQBATAPBg0rBgEEAZZkAwaDfQVuA0EAgP+uXQnG4oD6stT4qIgPPSKrUIryDduFaCH8mZD7mBD3FuaPzMp+O0hYV0RCYoxv2s9PMTP8N4wmel8pNNb/Ag==
------END CERTIFICATE-----
-`;
-
-const cert = parser.parse_certificate(pem2);
+const cert = parseCertificate(pem);
 console.log(cert);
 console.log(cert.tbsCertificate.extensions);
 

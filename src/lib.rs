@@ -1,22 +1,20 @@
+#![allow(non_snake_case)]
 mod utils;
 mod types;
 
 use hex::ToHex;
 use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
-use x509_parser::{parse_x509_certificate, pem};
-
-use crate::{types::*, utils::format_oid_simple};
-
-
+use x509_parser::{ parse_x509_certificate, pem};
+use crate::types::*;
 
 #[wasm_bindgen]
-pub fn parse_certificate(input: &str) -> Certificate {
+pub fn parseCertificate(input: &str) -> Certificate {
     set_panic_hook();
     print!("{}", input);
     let (_, pem) =  pem::parse_x509_pem(&input.as_bytes()).unwrap();
     let (_, cert) = parse_x509_certificate(&pem.contents).unwrap();
-    let extensions: Vec<Extension> = cert.extensions().iter().map(|f| Extension { critical: f.critical, value: f.value.encode_hex() }).collect();
+    let extensions: Vec<Extension> = cert.extensions().iter().map(|f| Extension { critical: f.critical, value: f.value.encode_hex(), extnID: f.oid.to_id_string() }).collect();
 
     Certificate {
         tbsCertificate: TBSCertificate {
@@ -29,16 +27,16 @@ pub fn parse_certificate(input: &str) -> Certificate {
             },
             issuer: cert.issuer().to_string(),
             validity: Validity {
-                notBefore: cert.validity.not_before.to_string(),
-                notAfter: cert.validity.not_after.to_string(),
+                notBefore: cert.validity.not_before.timestamp(),
+                notAfter: cert.validity.not_after.timestamp(),
             },
             subjectPublicKeyInfo:  SubjectPublicKeyInfo {
-                algorithm: format_oid_simple(cert.signature_algorithm.oid()),
-                subjectPublicKey: format_oid_simple(&cert.public_key().algorithm.algorithm),
+                algorithm: cert.signature_algorithm.oid().to_id_string(),
+                subjectPublicKey: cert.public_key().algorithm.algorithm.to_id_string(),
             },
             extensions,
         },
-        signatureAlgorithm: format_oid_simple(cert.signature_algorithm.oid()),
+        signatureAlgorithm: cert.signature_algorithm.oid().to_id_string(),
         signatureValue: cert.signature_value.encode_hex(),
 
     }

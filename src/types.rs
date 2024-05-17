@@ -35,8 +35,8 @@ pub struct SubjectPublicKeyInfo {
 #[derive(Tsify, Serialize, Deserialize)]
 #[tsify(into_wasm_abi, from_wasm_abi)]
 pub struct Validity {
-    pub notBefore: String,
-    pub notAfter: String,
+    pub notBefore: i64,
+    pub notAfter: i64,
 }
 
 #[derive(Tsify, Serialize, Deserialize)]
@@ -51,6 +51,7 @@ pub struct Signature {
 pub struct Extension {
     pub critical: bool,
     pub value: String,
+    pub extnID: String,
 }
 
 #[derive(Tsify, Serialize, Deserialize)]
